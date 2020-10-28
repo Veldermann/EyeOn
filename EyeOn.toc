@@ -1,7 +1,7 @@
 ## Interface: 11305
 ## Title: EyeOn
 ## Author: Threadripper
-## Version: 0.9
+## Version: 0.91
 ## SavedVariablesPerCharacter: blacklistTable, positionXaxis, positionYaxis, sizeXaxis, sizeYaxis
 
 EyeOn.lua
