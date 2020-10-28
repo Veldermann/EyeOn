@@ -82,30 +82,30 @@ function createAndLoad()
 	blacklistFrame.text:SetPoint("CENTER", blacklistFrame.title, "BOTTOM", 0, -20)
 	blacklistFrame.text:SetText("List of black listed players.")
 	
-	EyeOn.avarageMana = EyeOn:CreateFontString(nil, "OVERLAY")
-	EyeOn.avarageMana:SetFontObject("GameFontNormalLarge")
-	EyeOn.avarageMana:SetPoint("CENTER", EyeOn.title, "BOTTOM", 0, -20)
-	EyeOn.avarageMana:SetText("Avarage : 0 %")
+	EyeOn.averageMana = EyeOn:CreateFontString(nil, "OVERLAY")
+	EyeOn.averageMana:SetFontObject("GameFontNormalLarge")
+	EyeOn.averageMana:SetPoint("CENTER", EyeOn.title, "BOTTOM", 0, -20)
+	EyeOn.averageMana:SetText("Average : 0 %")
 	
-	druidAvarage = CreateFrame("Button", "druidAvarage", EyeOn)
-	druidAvarage:SetSize(25, 25)
-	druidAvarage:SetNormalFontObject("GameFontNormalLarge")
-	druidAvarage:SetPoint("CENTER", EyeOn.avarageMana, "BOTTOM", 0, -15)
+	druidAverage = CreateFrame("Button", "druidAverage", EyeOn)
+	druidAverage:SetSize(25, 25)
+	druidAverage:SetNormalFontObject("GameFontNormalLarge")
+	druidAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -15)
 	
-	priestAvarage = CreateFrame("Button", "priestAvarage", EyeOn)
-	priestAvarage:SetSize(25, 25)
-	priestAvarage:SetNormalFontObject("GameFontNormalLarge")
-	priestAvarage:SetPoint("CENTER", EyeOn.avarageMana, "BOTTOM", 0, -30)
+	priestAverage = CreateFrame("Button", "priestAverage", EyeOn)
+	priestAverage:SetSize(25, 25)
+	priestAverage:SetNormalFontObject("GameFontNormalLarge")
+	priestAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -30)
 
-	shamanAvarage = CreateFrame("Button", "shamanAvarage", EyeOn)
-	shamanAvarage:SetSize(25, 25)
-	shamanAvarage:SetNormalFontObject("GameFontNormalLarge")
-	shamanAvarage:SetPoint("CENTER", EyeOn.avarageMana, "BOTTOM", 0, -45)
+	shamanAverage = CreateFrame("Button", "shamanAverage", EyeOn)
+	shamanAverage:SetSize(25, 25)
+	shamanAverage:SetNormalFontObject("GameFontNormalLarge")
+	shamanAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -45)
 	
-	paladinAvarage = CreateFrame("Button", "paladinAvarage", EyeOn)
-	paladinAvarage:SetSize(25, 25)
-	paladinAvarage:SetNormalFontObject("GameFontNormalLarge")
-	paladinAvarage:SetPoint("CENTER", EyeOn.avarageMana, "BOTTOM", 0, -60)
+	paladinAverage = CreateFrame("Button", "paladinAverage", EyeOn)
+	paladinAverage:SetSize(25, 25)
+	paladinAverage:SetNormalFontObject("GameFontNormalLarge")
+	paladinAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -60)
 	
 	print("EyeOn LOADED!")
 end
@@ -190,6 +190,9 @@ commandTable = {["show"] = function()
 				end,
 				["charactertable"] = function()
 					printCharacter()
+				end,
+				[""] = function()
+					printHelp()
 				end
 				}
 
@@ -305,7 +308,7 @@ function autoAddCharacters()
 	end
 	
 	for i=1, GetNumGroupMembers() do
-		print(i)
+
 		name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)			
 		
 		if name then
@@ -521,18 +524,18 @@ function classColor(key)
 	end
 end
 	
-function avarage(currentMana, maxMana)
+function average(currentMana, maxMana)
 	return math.floor(currentMana * 100 / maxMana)
 end
 
-function updateClassAvarage(frame, class, classAvarage)
+function updateClassAverage(frame, class, classAverage)
 	frame:Show()
-	if classAvarage >= 75 then
-		frame:SetText("|cFF00FF00" .. class .. " : " .. classAvarage .. " %")
-	elseif classAvarage >= 20 then
-		frame:SetText("|cFFFFFF00" .. class .. " : " .. classAvarage .. " %")
+	if classAverage >= 75 then
+		frame:SetText("|cFF00FF00" .. class .. " : " .. classAverage .. " %")
+	elseif classAverage >= 20 then
+		frame:SetText("|cFFFFFF00" .. class .. " : " .. classAverage .. " %")
 	else
-		frame:SetText("|cFFFF0000" .. class .. " : " .. classAvarage .. " %")
+		frame:SetText("|cFFFF0000" .. class .. " : " .. classAverage .. " %")
 	end
 end
 
@@ -612,45 +615,45 @@ function updateResource()
 	EyeOn:SetSize(150, eyeonSizeY)
 	EyeOn:SetMinResize(150, eyeonSizeY)
 	
-	local druidManaAvarage = math.floor(druidCurrentMana * 100 / druidMaxMana)
-	local priestManaAvarage = math.floor(priestCurrentMana * 100 / priestMaxMana)
-	local shamanManaAvarage = math.floor(shamanCurrentMana * 100 / shamanMaxMana)
-	local paladinManaAvarage = math.floor(paladinCurrentMana * 100 / paladinMaxMana)
+	local druidManaAverage = math.floor(druidCurrentMana * 100 / druidMaxMana)
+	local priestManaAverage = math.floor(priestCurrentMana * 100 / priestMaxMana)
+	local shamanManaAverage = math.floor(shamanCurrentMana * 100 / shamanMaxMana)
+	local paladinManaAverage = math.floor(paladinCurrentMana * 100 / paladinMaxMana)
 	
 	if druidCount == 0 then
-		druidAvarage:Hide()
+		druidAverage:Hide()
 	else
-		updateClassAvarage(druidAvarage, "Druid", druidManaAvarage)
+		updateClassAverage(druidAverage, "Druid", druidManaAverage)
 	end
 	
 	if priestCount == 0 then
-		priestAvarage:Hide()
+		priestAverage:Hide()
 	else
-		updateClassAvarage(priestAvarage, "Priest", priestManaAvarage)
+		updateClassAverage(priestAverage, "Priest", priestManaAverage)
 	end
 	
 	if shamanCount == 0 then
-		shamanAvarage:Hide()
+		shamanAverage:Hide()
 	else
-		updateClassAvarage(shamanAvarage, "Shaman", shamanManaAvarage)
+		updateClassAverage(shamanAverage, "Shaman", shamanManaAverage)
 	end
 	
 	if paladinCount == 0 then
-		paladinAvarage:Hide()
+		paladinAverage:Hide()
 	else
-		updateClassAvarage(paladinAvarage, "Paladin", paladinManaAvarage)
+		updateClassAverage(paladinAverage, "Paladin", paladinManaAverage)
 	end
 	
-	avarageManaPercent = math.floor(currentMana * 100 / maxMana)
-	avarageManaText = "Avarage : 0 %"
+	averageManaPercent = math.floor(currentMana * 100 / maxMana)
+	averageManaText = "Average : 0 %"
 	
 	if table.getn(charactersTable) <= 0 then
-		EyeOn.avarageMana:SetText("|cFF00FF00Avarage : " .. " %")
-	elseif avarageManaPercent >= 75 then
-		EyeOn.avarageMana:SetText("|cFF00FF00Avarage : " .. avarageManaPercent .. " %")
-	elseif avarageManaPercent >= 20 then
-		EyeOn.avarageMana:SetText("|cFFFFFF00Avarage : " .. avarageManaPercent .. " %")
+		EyeOn.averageMana:SetText("|cFF00FF00Average : " .. " %")
+	elseif averageManaPercent >= 75 then
+		EyeOn.averageMana:SetText("|cFF00FF00Average : " .. averageManaPercent .. " %")
+	elseif averageManaPercent >= 20 then
+		EyeOn.averageMana:SetText("|cFFFFFF00Average : " .. averageManaPercent .. " %")
 	else
-		EyeOn.avarageMana:SetText("|cFFFF0000Avarage : " .. avarageManaPercent .. " %")
+		EyeOn.averageMana:SetText("|cFFFF0000Average : " .. averageManaPercent .. " %")
 	end	
 end
