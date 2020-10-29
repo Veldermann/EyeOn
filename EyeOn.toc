@@ -5,3 +5,4 @@
 ## SavedVariablesPerCharacter: blacklistTable, positionXaxis, positionYaxis, sizeXaxis, sizeYaxis
 
 EyeOn.lua
+EyeOn.xml
