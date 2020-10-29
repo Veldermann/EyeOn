@@ -3,6 +3,10 @@
 
 -- Lets add all the watched players in this table --
 
+local addonName, EYEONMASTERFRAME = ...;
+-- Globally required vars and funcs
+EYEONMASTERFRAME_G = { };
+
 classTable = {"PRIEST", "SHAMAN", "DRUID", "PALADIN"}
 charactersTable = {}
 removedTable = {}
@@ -368,6 +372,30 @@ function autoAddCharacters()
 								playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
 								playerButton:SetAttribute("type", "target")
 								playerButton:SetAttribute("unit", name)
+
+
+
+
+								playerButton2 = CreateFrame("Button", name, EyeOnMasterFrame_PlayerFrame, "SecureUnitButtonTemplate")
+								playerButton2:SetScript("OnEnter", function (self, event)
+																	loadGameTooltipInfo(self)
+																end)
+								playerButton2:SetScript("OnLeave", function(self, event)
+																	GameTooltip:Hide()
+																end)
+								playerButton2:SetSize(100, 15)
+								playerButton2:SetNormalFontObject("GameFontNormalSmall")
+								playerButton2:RegisterForClicks("AnyUp")
+								-- playerButton2:SetPoint("TOPLEFT", 0, -20)
+								playerButton:SetPoint("TOPLEFT", EyeOnMasterFrame_PlayerFrame, "TOP", 0, 0)
+								playerButton2:SetAttribute("type", "target")
+								playerButton2:SetAttribute("unit", name)
+								-- playerButton2:SetText(name)
+
+
+
+
+
 								table.insert(charactersTable, name)
 							end
 						end
@@ -568,6 +596,10 @@ function updateResource()
 			if englishClass == classTable[class] then
 				playerButton = _G[character]
 				playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, characterTextOffset)
+
+				playerButton2 = _G[character]
+				playerButton:SetPoint("TOPLEFT", EyeOnMasterFrame_PlayerFrame, "TOP", 0, characterTextOffset)
+				
 				isPlayerFrameVisible = playerButton:IsShown()
 				if isPlayerFrameVisible then
 					characterTextOffset = characterTextOffset - 15
@@ -656,4 +688,53 @@ function updateResource()
 	else
 		EyeOn.averageMana:SetText("|cFFFF0000Average : " .. averageManaPercent .. " %")
 	end	
+
+	EyeOnMasterFrame_ResourceFrame.avarageMana:SetText("Average : " .. averageManaPercent .. " %")
+
+end
+
+
+function EYEONMASTERFRAME_G.OnLoad(self)
+
+	print("EYEONMASTERFRAME_G.OnLoad msg")
+
+    self:RegisterEvent("UNIT_POWER_UPDATE");
+    self:RegisterEvent("GROUP_ROSTER_UPDATE");
+    self:RegisterEvent("RAID_ROSTER_UPDATE");
+    self:RegisterEvent("PLAYER_LOGIN");
+
+    EyeOnMasterFrame_ResourceFrame.avarageMana = EyeOnMasterFrame_ResourceFrame:CreateFontString(nil, "OVERLAY")
+	EyeOnMasterFrame_ResourceFrame.avarageMana:SetFontObject("GameFontNormal")
+	EyeOnMasterFrame_ResourceFrame.avarageMana:SetPoint("TOPLEFT")
+	EyeOnMasterFrame_ResourceFrame.avarageMana:SetText("Average : 0 %")
+
+
+end
+
+function EYEONMASTERFRAME_G.OnEvent(self, event, ...)
+	print("EYEONMASTERFRAME_G.OnEvent msg" + event)
+
+end
+
+
+function EYEONMASTERFRAME_G.MouseDown(self, button)
+	print("EYEONMASTERFRAME_G.MouseDown msg")
+    if button == "LeftButton" then
+        self:StartMoving();
+    end
+end
+
+function EYEONMASTERFRAME_G.MouseUp(self, button)
+	print("EYEONMASTERFRAME_G.MouseUp msg")
+    if button == "LeftButton" then
+        self:StopMovingOrSizing();
+        -- Save new X and Y position
+        EYEONMASTERFRAME.GetPoint(EyeOnMasterFrame, EYEONMASTERFRAME.ANCHORPOINT_DROPDOWN_MAP["Auto"]);
+    end
+end
+
+function EYEONMASTERFRAME_G.OptionsToggle(self)
+
+	print("EYEONMASTERFRAME_G.OptionsToggle msg")
+
 end
