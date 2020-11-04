@@ -12,118 +12,15 @@ charactersTable = {}
 removedTable = {}
 unusedFrames = {}
 
--- Create initial frame that retrieves Savedvariables and Creates the main addon frame --
-
-init_frame = CreateFrame("Frame", "Initial_Frame", UIParent)
-init_frame:RegisterEvent("ADDON_LOADED")
-init_frame:SetScript("OnEvent", function()
-									createAndLoad() 
-								end)
-
--- Creates main frame, positions and add events --
-
-function createAndLoad()
-
-	init_frame:UnregisterEvent("ADDON_LOADED")
-	
-	if blacklistTable == nil then
-		blacklistTable = {}
-	end
-	
-	if positionXaxis == nil and positionYaxis == nil then
-		positionXaxis = 0
-		positionYaxis = 0
-	end
-	
-	if sizeXaxis == nil and sizeYaxis == nil then
-		sizeXaxis = 150
-		sizeYaxis = 100
-	end
-					
-	EyeOn = CreateFrame("Frame", "EyeOn", UIParent)
-	EyeOn:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = false, tileSize = 0, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
-	EyeOn:SetBackdropColor(0,0,0,0.6)
-	EyeOn:SetSize(sizeXaxis, sizeYaxis)
-	EyeOn:SetPoint("CENTER", UIParent, "CENTER", positionXaxis, positionYaxis)
-	EyeOn:SetMovable(true)
-	EyeOn:EnableMouse(true)
-	EyeOn:SetResizable(true)
-	EyeOn:RegisterForDrag("LeftButton")
-	EyeOn:SetScript("OnDragStart", EyeOn.StartMoving)
-	EyeOn:SetScript("OnDragStop", EyeOn.StopMovingOrSizing)
-	EyeOn:SetMinResize(150, 100)
-	for event, value in pairs(EyeOnEvents) do
-		EyeOn:RegisterEvent(event)
-	end
-	EyeOn:SetScript("OnEvent", function(self, event, ...)
-									EyeOnEvents[event]()
-								end)
-	
-	EyeOn.title = EyeOn:CreateFontString(nil, "OVERLAY")
-	EyeOn.title:SetFontObject("GameFontNormalSmall")
-	EyeOn.title:SetPoint("CENTER", EyeOn, "TOP", 0, -10)
-	EyeOn.title:SetText("EyeOn")
-	
-	blacklistFrame = CreateFrame("Frame", "BlackListFrame", UIParent)
-	blacklistFrame:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = false, tileSize = 0, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
-	blacklistFrame:SetBackdropColor(0,0,0,0.6)
-	blacklistFrame:SetSize(150, 150)
-	blacklistFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-	blacklistFrame:SetMovable(true)
-	blacklistFrame:EnableMouse(true)
-	blacklistFrame:RegisterForDrag("LeftButton")
-	blacklistFrame:SetScript("OnDragStart", EyeOn.StartMoving)
-	blacklistFrame:SetScript("OnDragStop", EyeOn.StopMovingOrSizing)
-	blacklistFrame:Hide()
-	
-	blacklistFrame.title = blacklistFrame:CreateFontString(nil, "OVERLAY")
-	blacklistFrame.title:SetFontObject("GameFontNormalSmall")
-	blacklistFrame.title:SetPoint("CENTER", blacklistFrame, "TOP", 0, -10)
-	blacklistFrame.title:SetText("EyeOn BlackList")
-
-	blacklistFrame.text = blacklistFrame:CreateFontString(nil, "OVERLAY")
-	blacklistFrame.text:SetFontObject("GameFontNormalSmall")
-	blacklistFrame.text:SetPoint("CENTER", blacklistFrame.title, "BOTTOM", 0, -20)
-	blacklistFrame.text:SetText("List of black listed players.")
-	
-	EyeOn.averageMana = EyeOn:CreateFontString(nil, "OVERLAY")
-	EyeOn.averageMana:SetFontObject("GameFontNormalLarge")
-	EyeOn.averageMana:SetPoint("CENTER", EyeOn.title, "BOTTOM", 0, -20)
-	EyeOn.averageMana:SetText("Average : 0 %")
-	
-	druidAverage = CreateFrame("Button", "druidAverage", EyeOn)
-	druidAverage:SetSize(25, 25)
-	druidAverage:SetNormalFontObject("GameFontNormalLarge")
-	druidAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -15)
-	
-	priestAverage = CreateFrame("Button", "priestAverage", EyeOn)
-	priestAverage:SetSize(25, 25)
-	priestAverage:SetNormalFontObject("GameFontNormalLarge")
-	priestAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -30)
-
-	shamanAverage = CreateFrame("Button", "shamanAverage", EyeOn)
-	shamanAverage:SetSize(25, 25)
-	shamanAverage:SetNormalFontObject("GameFontNormalLarge")
-	shamanAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -45)
-	
-	paladinAverage = CreateFrame("Button", "paladinAverage", EyeOn)
-	paladinAverage:SetSize(25, 25)
-	paladinAverage:SetNormalFontObject("GameFontNormalLarge")
-	paladinAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -60)
-	
-	print("EyeOn LOADED!")
-end
-
-
 -- Command Table - Self explanetory --
 
 commandTable = {["show"] = function()
-					print("Using first SHOW!")
-					EyeOn:Show()
+					print("Showing EyeOn.")
+					EyeOnMasterFrame:Show()
 				end,
 				["hide"] = function()
-					print("Using first HIDE!")
-					EyeOn:Hide()
+					print("Hiding EyeOn")
+					EyeOnMasterFrame:Hide()
 				end,
 				["add"] = function(text)
 					addPlayer(text)
@@ -180,20 +77,8 @@ commandTable = {["show"] = function()
 				["shownames"] = function()
 					showNames()
 				end,
-				["position"] = function(text)
-					changePosition(text)
-				end,
-				["size"] = function(text)
-					changeSize(text)
-				end,
 				["help"] = function()
 					printHelp()
-				end,
-				["removedtable"] = function()
-					printRemove()
-				end,
-				["charactertable"] = function()
-					printCharacter()
 				end,
 				[""] = function()
 					printHelp()
@@ -313,8 +198,7 @@ function autoAddCharacters()
 	
 	for i=1, GetNumGroupMembers() do
 
-		name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)			
-		
+		name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)
 		if name then
 		
 			isInBlacklistTable = 0
@@ -359,7 +243,7 @@ function autoAddCharacters()
 							end
 						else
 							if fileName == "DRUID" or fileName == "PRIEST" or fileName == "SHAMAN" or fileName == "PALADIN" then
-								playerButton = CreateFrame("Button", name, EyeOn, "SecureUnitButtonTemplate")
+								playerButton = CreateFrame("Button", name, EyeOnMasterFrame, "SecureUnitButtonTemplate")
 								playerButton:SetNormalFontObject("GameFontNormalSmall")
 								playerButton:SetScript("OnEnter", function (self, event)
 																	loadGameTooltipInfo(self)
@@ -369,33 +253,10 @@ function autoAddCharacters()
 																end)
 								playerButton:SetSize(100, 15)
 								playerButton:RegisterForClicks("AnyUp")
-								playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
+								playerButton:SetPoint("CENTER", EyeOnMasterFrame, "TOP", 0, 0)
 								playerButton:SetAttribute("type", "target")
 								playerButton:SetAttribute("unit", name)
-
-
-
-
-								playerButton2 = CreateFrame("Button", name, EyeOnMasterFrame_PlayerFrame, "SecureUnitButtonTemplate")
-								playerButton2:SetScript("OnEnter", function (self, event)
-																	loadGameTooltipInfo(self)
-																end)
-								playerButton2:SetScript("OnLeave", function(self, event)
-																	GameTooltip:Hide()
-																end)
-								playerButton2:SetSize(100, 15)
-								playerButton2:SetNormalFontObject("GameFontNormalSmall")
-								playerButton2:RegisterForClicks("AnyUp")
-								-- playerButton2:SetPoint("TOPLEFT", 0, -20)
-								playerButton:SetPoint("TOPLEFT", EyeOnMasterFrame_PlayerFrame, "TOP", 0, 0)
-								playerButton2:SetAttribute("type", "target")
-								playerButton2:SetAttribute("unit", name)
-								-- playerButton2:SetText(name)
-
-
-
-
-
+								
 								table.insert(charactersTable, name)
 							end
 						end
@@ -456,7 +317,7 @@ function addPlayer(text)
 					characterToAddFrame:Show()
 					print(playerToAdd ..  " added to the Watch List")	
 				else
-					playerButton = CreateFrame("Button", playerToAdd, EyeOn)
+					playerButton = CreateFrame("Button", playerToAdd, EyeOnMasterFrame)
 					playerButton:SetSize(25, 25)
 					playerButton:SetNormalFontObject("GameFontNormalSmall")
 					table.insert(charactersTable, playerToAdd)
@@ -496,21 +357,6 @@ function resetTable()
 		table.remove(charactersTable, 1)
 	end
 	updateResource()
-end
-
-
-function changePosition(position)
-	local positionx, positiony = strsplit(" ", position, 2)
-	EyeOn:SetPoint("CENTER", UIParent, "CENTER", positionx, positiony)
-	positionXaxis = positionx
-	positionYaxis = positiony
-end
-
-function changeSize(size)
-	local x, y = strsplit(" ", size, 2)
-	EyeOn:SetSize(x, y)
-	sizeXaxis = x
-	sizeYaxis = y
 end
 
 function printHelp()
@@ -568,8 +414,8 @@ function updateClassAverage(frame, class, classAverage)
 end
 
 function updateResource()
-	characterTextOffset = -120
-	eyeonSizeY = 120
+	characterTextOffset = -50
+	eyeonSizeY = 50
 
 	local maxMana = 0
 	local currentMana = 0
@@ -595,10 +441,7 @@ function updateResource()
 			localizedClass, englishClass = UnitClass(charactersTable[key])
 			if englishClass == classTable[class] then
 				playerButton = _G[character]
-				playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, characterTextOffset)
-
-				playerButton2 = _G[character]
-				playerButton:SetPoint("TOPLEFT", EyeOnMasterFrame_PlayerFrame, "TOP", 0, characterTextOffset)
+				playerButton:SetPoint("CENTER", EyeOnMasterFrame, "TOP", 0, characterTextOffset)
 				
 				isPlayerFrameVisible = playerButton:IsShown()
 				if isPlayerFrameVisible then
@@ -644,14 +487,14 @@ function updateResource()
 		end
 	end
 	
-	EyeOn:SetSize(150, eyeonSizeY)
-	EyeOn:SetMinResize(150, eyeonSizeY)
+	EyeOnMasterFrame:SetSize(150, eyeonSizeY)
+	EyeOnMasterFrame:SetMinResize(150, eyeonSizeY)
 	
 	local druidManaAverage = math.floor(druidCurrentMana * 100 / druidMaxMana)
 	local priestManaAverage = math.floor(priestCurrentMana * 100 / priestMaxMana)
 	local shamanManaAverage = math.floor(shamanCurrentMana * 100 / shamanMaxMana)
 	local paladinManaAverage = math.floor(paladinCurrentMana * 100 / paladinMaxMana)
-	
+--[[
 	if druidCount == 0 then
 		druidAverage:Hide()
 	else
@@ -675,39 +518,37 @@ function updateResource()
 	else
 		updateClassAverage(paladinAverage, "Paladin", paladinManaAverage)
 	end
-	
+--]]
 	averageManaPercent = math.floor(currentMana * 100 / maxMana)
 	averageManaText = "Average : 0 %"
 	
 	if table.getn(charactersTable) <= 0 then
-		EyeOn.averageMana:SetText("|cFF00FF00Average : " .. " %")
+		EyeOnMasterFrame_ResourceFrame.averageMana:SetText("|cFF00FF00Average : " .. " %")
 	elseif averageManaPercent >= 75 then
-		EyeOn.averageMana:SetText("|cFF00FF00Average : " .. averageManaPercent .. " %")
+		EyeOnMasterFrame_ResourceFrame.averageMana:SetText("|cFF00FF00Average : " .. averageManaPercent .. " %")
 	elseif averageManaPercent >= 20 then
-		EyeOn.averageMana:SetText("|cFFFFFF00Average : " .. averageManaPercent .. " %")
+		EyeOnMasterFrame_ResourceFrame.averageMana:SetText("|cFFFFFF00Average : " .. averageManaPercent .. " %")
 	else
-		EyeOn.averageMana:SetText("|cFFFF0000Average : " .. averageManaPercent .. " %")
+		EyeOnMasterFrame_ResourceFrame.averageMana:SetText("|cFFFF0000Average : " .. averageManaPercent .. " %")
 	end	
-
-	EyeOnMasterFrame_ResourceFrame.avarageMana:SetText("Average : " .. averageManaPercent .. " %")
-
 end
-
 
 function EYEONMASTERFRAME_G.OnLoad(self)
 
 	print("EYEONMASTERFRAME_G.OnLoad msg")
 
-    self:RegisterEvent("UNIT_POWER_UPDATE");
-    self:RegisterEvent("GROUP_ROSTER_UPDATE");
-    self:RegisterEvent("RAID_ROSTER_UPDATE");
-    self:RegisterEvent("PLAYER_LOGIN");
+	for event, value in pairs(EyeOnEvents) do
+		self:RegisterEvent(event)
+	end
+	
+	self:SetScript("OnEvent", function(self, event, ...)
+									EyeOnEvents[event]()
+								end)
 
-    EyeOnMasterFrame_ResourceFrame.avarageMana = EyeOnMasterFrame_ResourceFrame:CreateFontString(nil, "OVERLAY")
-	EyeOnMasterFrame_ResourceFrame.avarageMana:SetFontObject("GameFontNormal")
-	EyeOnMasterFrame_ResourceFrame.avarageMana:SetPoint("TOPLEFT")
-	EyeOnMasterFrame_ResourceFrame.avarageMana:SetText("Average : 0 %")
-
+    EyeOnMasterFrame_ResourceFrame.averageMana = EyeOnMasterFrame_ResourceFrame:CreateFontString(nil, "OVERLAY")
+	EyeOnMasterFrame_ResourceFrame.averageMana:SetFontObject("GameFontNormal")
+	EyeOnMasterFrame_ResourceFrame.averageMana:SetPoint("TOPLEFT")
+	EyeOnMasterFrame_ResourceFrame.averageMana:SetText("Average : 0 %")
 
 end
 
