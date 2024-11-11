@@ -1,4 +1,4 @@
-## Interface: 11305
+## Interface: 40400
 ## Title: EyeOn
 ## Author: Threadripper
 ## Version: 0.91

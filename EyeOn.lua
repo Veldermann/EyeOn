@@ -32,12 +32,12 @@ function createAndLoad()
 	end
 	
 	if sizeXaxis == nil and sizeYaxis == nil then
-		sizeXaxis = 150
-		sizeYaxis = 100
+		sizeXaxis = 200
+		sizeYaxis = 200
 	end
-					
-	EyeOn = CreateFrame("Frame", "EyeOn", UIParent)
-	EyeOn:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = false, tileSize = 0, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
+	
+	EyeOn = CreateFrame("Frame", "EyeOn", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+	EyeOn:SetBackdrop({bgFile = [[Interface/Tooltips/UI-Tooltip-Background]], edgeFile = [[Interface/Tooltips/UI-Tooltip-Border]], tile = false, tileSize = 1, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
 	EyeOn:SetBackdropColor(0,0,0,0.6)
 	EyeOn:SetSize(sizeXaxis, sizeYaxis)
 	EyeOn:SetPoint("CENTER", UIParent, "CENTER", positionXaxis, positionYaxis)
@@ -47,20 +47,20 @@ function createAndLoad()
 	EyeOn:RegisterForDrag("LeftButton")
 	EyeOn:SetScript("OnDragStart", EyeOn.StartMoving)
 	EyeOn:SetScript("OnDragStop", EyeOn.StopMovingOrSizing)
-	EyeOn:SetMinResize(150, 100)
+	EyeOn:SetResizeBounds(200, 200)
 	for event, value in pairs(EyeOnEvents) do
 		EyeOn:RegisterEvent(event)
 	end
 	EyeOn:SetScript("OnEvent", function(self, event, ...)
 									EyeOnEvents[event]()
 								end)
-	
+	print("Almost there")
 	EyeOn.title = EyeOn:CreateFontString(nil, "OVERLAY")
 	EyeOn.title:SetFontObject("GameFontNormalSmall")
 	EyeOn.title:SetPoint("CENTER", EyeOn, "TOP", 0, -10)
 	EyeOn.title:SetText("EyeOn")
 	
-	blacklistFrame = CreateFrame("Frame", "BlackListFrame", UIParent)
+	blacklistFrame = CreateFrame("Frame", "BlackListFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
 	blacklistFrame:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = false, tileSize = 0, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
 	blacklistFrame:SetBackdropColor(0,0,0,0.6)
 	blacklistFrame:SetSize(150, 150)
@@ -356,14 +356,14 @@ function autoAddCharacters()
 						else
 							if fileName == "DRUID" or fileName == "PRIEST" or fileName == "SHAMAN" or fileName == "PALADIN" then
 								playerButton = CreateFrame("Button", name, EyeOn, "SecureUnitButtonTemplate")
-								playerButton:SetNormalFontObject("GameFontNormalSmall")
+								playerButton:SetNormalFontObject("GameFontNormalLarge")
 								playerButton:SetScript("OnEnter", function (self, event)
 																	loadGameTooltipInfo(self)
 																end)
 								playerButton:SetScript("OnLeave", function(self, event)
 																	GameTooltip:Hide()
 																end)
-								playerButton:SetSize(100, 15)
+								playerButton:SetSize(100, 25)
 								playerButton:RegisterForClicks("AnyUp")
 								playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
 								playerButton:SetAttribute("type", "target")
@@ -381,7 +381,7 @@ function autoAddCharacters()
 end
 
 function loadGameTooltipInfo(self)
-	local frameName = GetMouseFocus():GetName()
+	local frameName = self:GetName()
 	GameTooltip:SetOwner(UIParent, "ANCHOR_BOTTOMRIGHT", -310, 190)
 	GameTooltip:SetUnit(frameName)
 	GameTooltip:Show()
@@ -525,6 +525,9 @@ function classColor(key)
 end
 	
 function average(currentMana, maxMana)
+	if maxMana == 0 then
+		return 100
+	end
 	return math.floor(currentMana * 100 / maxMana)
 end
 
@@ -613,7 +616,7 @@ function updateResource()
 	end
 	
 	EyeOn:SetSize(150, eyeonSizeY)
-	EyeOn:SetMinResize(150, eyeonSizeY)
+	EyeOn:SetResizeBounds(150, eyeonSizeY)
 	
 	local druidManaAverage = math.floor(druidCurrentMana * 100 / druidMaxMana)
 	local priestManaAverage = math.floor(priestCurrentMana * 100 / priestMaxMana)
