@@ -82,119 +82,95 @@ function createAndLoad()
 	blacklistFrame.text:SetPoint("CENTER", blacklistFrame.title, "BOTTOM", 0, -20)
 	blacklistFrame.text:SetText("List of black listed players.")
 	
-	EyeOn.averageMana = EyeOn:CreateFontString(nil, "OVERLAY")
-	EyeOn.averageMana:SetFontObject("GameFontNormalLarge")
-	EyeOn.averageMana:SetPoint("CENTER", EyeOn.title, "BOTTOM", 0, -20)
-	EyeOn.averageMana:SetText("Average : 0 %")
-	
-	druidAverage = CreateFrame("Button", "druidAverage", EyeOn)
-	druidAverage:SetSize(25, 25)
-	druidAverage:SetNormalFontObject("GameFontNormalLarge")
-	druidAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -15)
-	
-	priestAverage = CreateFrame("Button", "priestAverage", EyeOn)
-	priestAverage:SetSize(25, 25)
-	priestAverage:SetNormalFontObject("GameFontNormalLarge")
-	priestAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -30)
-
-	shamanAverage = CreateFrame("Button", "shamanAverage", EyeOn)
-	shamanAverage:SetSize(25, 25)
-	shamanAverage:SetNormalFontObject("GameFontNormalLarge")
-	shamanAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -45)
-	
-	paladinAverage = CreateFrame("Button", "paladinAverage", EyeOn)
-	paladinAverage:SetSize(25, 25)
-	paladinAverage:SetNormalFontObject("GameFontNormalLarge")
-	paladinAverage:SetPoint("CENTER", EyeOn.averageMana, "BOTTOM", 0, -60)
-	
 	print("EyeOn LOADED!")
 end
 
 
 -- Command Table - Self explanetory --
 
-commandTable = {["show"] = function()
+commandTable = {
+	["show"] = function()
 					print("Using first SHOW!")
 					EyeOn:Show()
 				end,
-				["hide"] = function()
+	["hide"] = function()
 					print("Using first HIDE!")
 					EyeOn:Hide()
 				end,
-				["add"] = function(text)
+	["add"] = function(text)
 					addPlayer(text)
 				end,
-				["remove"] = function(text)
+	["remove"] = function(text)
 					removePlayer(text)
 				end,
-				["blshow"] = function()
+	["blshow"] = function()
 					blacklistFrameUpdate()
 					blacklistFrame:Show()
 				end,
-				["blhide"] = function()
+	["blhide"] = function()
 					blacklistFrame:Hide()
 				end,
-				["bladd"] = function(text)
+	["bladd"] = function(text)
 					blacklistAdd(text)
 				end,
-				["blremove"] = function(text)
+	["blremove"] = function(text)
 					blacklistRemove(text)
 				end,				
-				["blacklist"] = {
-					["show"] = function()
+	["blacklist"] = {
+		["show"] = function()
 						blacklistFrameUpdate()
 						blacklistFrame:Show()
 					end,
-					["hide"] = function()
+		["hide"] = function()
 						blacklistFrame:Hide()
 					end,
-					["add"] = function(text)
+		["add"] = function(text)
 						blacklistAdd(text)
 					end,
-					["remove"] = function(text)
+		["remove"] = function(text)
 						blacklistRemove(text)
 					end
-				},
-				["bl"] = {
-					["show"] = function()
+	},
+	["bl"] = {
+		["show"] = function()
 						blacklistFrameUpdate()
 						blacklistFrame:Show()
 					end,
-					["hide"] = function()
+		["hide"] = function()
 						blacklistFrame:Hide()
 					end,
-					["add"] = function(text)
+		["add"] = function(text)
 						blacklistAdd(text)
 					end,
-					["remove"] = function(text)
+		["remove"] = function(text)
 						blacklistRemove(text)
 					end
-				},
-				["hidenames"] = function()
+	},
+	["hidenames"] = function()
 					hideNames()
 				end,
-				["shownames"] = function()
+	["shownames"] = function()
 					showNames()
 				end,
-				["position"] = function(text)
+	["position"] = function(text)
 					changePosition(text)
 				end,
-				["size"] = function(text)
+	["size"] = function(text)
 					changeSize(text)
 				end,
-				["help"] = function()
+	["help"] = function()
 					printHelp()
 				end,
-				["removedtable"] = function()
+	["removedtable"] = function()
 					printRemove()
 				end,
-				["charactertable"] = function()
+	["charactertable"] = function()
 					printCharacter()
 				end,
-				[""] = function()
+	[""] = function()
 					printHelp()
 				end
-				}
+}
 
 -- Class Color Table --
 
@@ -384,7 +360,7 @@ end
 
 function loadGameTooltipInfo(self)
 	local frameName = self:GetName()
-	GameTooltip:SetOwner(UIParent, "ANCHOR_BOTTOMRIGHT", -310, 190)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 0, 0)
 	GameTooltip:SetUnit(frameName)
 	GameTooltip:Show()
 end
@@ -440,9 +416,9 @@ function addPlayer(text)
 													end)
 					playerButton:SetSize(100, 25)
 					playerButton:RegisterForClicks("AnyUp")
-					playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
+					playerButton:SetPoint("TOP", EyeOn, "TOP", 0, -15)
 					playerButton:SetAttribute("type", "target")
-					playerButton:SetAttribute("unit", name)
+					playerButton:SetAttribute("unit", playerToAdd)
 					table.insert(charactersTable, playerToAdd)
 					print(playerToAdd ..  " added to the Watch List")
 				end
@@ -561,22 +537,6 @@ function updateResource()
 	local maxMana = 0
 	local currentMana = 0
 	
-	druidCurrentMana = 0
-	druidMaxMana = 0
-	druidCount = 0
-	
-	priestCurrentMana = 0
-	priestMaxMana = 0
-	priestCount = 0
-	
-	shamanCurrentMana = 0
-	shamanMaxMana = 0
-	shamanCount = 0
-	
-	paladinCurrentMana = 0
-	paladinMaxMana = 0
-	paladinCount = 0
-	
 	for class=1, #classTable do
 		for key, character in pairs(charactersTable) do
 			localizedClass, englishClass = UnitClass(charactersTable[key])
@@ -594,23 +554,6 @@ function updateResource()
 				manaPercent = math.floor(currentPower * 100 / maxPower)
 				maxMana = maxMana + maxPower
 				currentMana = currentMana + currentPower
-				if englishClass == "DRUID" then
-					druidCurrentMana = druidCurrentMana + currentPower
-					druidMaxMana = druidMaxMana + maxPower
-					druidCount = druidCount + 1
-				elseif englishClass == "PRIEST" then
-					priestCurrentMana = priestCurrentMana + currentPower
-					priestMaxMana = priestMaxMana + maxPower
-					priestCount = priestCount + 1
-				elseif englishClass == "SHAMAN" then
-					shamanCurrentMana = shamanCurrentMana + currentPower
-					shamanMaxMana = shamanMaxMana + maxPower
-					shamanCount = shamanCount + 1
-				elseif englishClass == "PALADIN" then
-					paladinCurrentMana = paladinCurrentMana + currentPower
-					paladinMaxMana = paladinMaxMana + maxPower
-					paladinCount = paladinCount + 1
-				end
 				
 				if manaPercent > 74 then
 					playerButton:SetText(classColor(key) .. character .. " - |cFF00FF00" .. manaPercent .. " %")
@@ -629,46 +572,5 @@ function updateResource()
 	
 	EyeOn:SetSize(150, eyeonSizeY)
 	EyeOn:SetResizeBounds(150, eyeonSizeY)
-	
-	local druidManaAverage = math.floor(druidCurrentMana * 100 / druidMaxMana)
-	local priestManaAverage = math.floor(priestCurrentMana * 100 / priestMaxMana)
-	local shamanManaAverage = math.floor(shamanCurrentMana * 100 / shamanMaxMana)
-	local paladinManaAverage = math.floor(paladinCurrentMana * 100 / paladinMaxMana)
-	
-	if druidCount == 0 then
-		druidAverage:Hide()
-	else
-		updateClassAverage(druidAverage, "Druid", druidManaAverage)
-	end
-	
-	if priestCount == 0 then
-		priestAverage:Hide()
-	else
-		updateClassAverage(priestAverage, "Priest", priestManaAverage)
-	end
-	
-	if shamanCount == 0 then
-		shamanAverage:Hide()
-	else
-		updateClassAverage(shamanAverage, "Shaman", shamanManaAverage)
-	end
-	
-	if paladinCount == 0 then
-		paladinAverage:Hide()
-	else
-		updateClassAverage(paladinAverage, "Paladin", paladinManaAverage)
-	end
-	
-	averageManaPercent = math.floor(currentMana * 100 / maxMana)
-	averageManaText = "Average : 0 %"
-	
-	if table.getn(charactersTable) <= 0 then
-		EyeOn.averageMana:SetText("|cFF00FF00Average : " .. " %")
-	elseif averageManaPercent >= 75 then
-		EyeOn.averageMana:SetText("|cFF00FF00Average : " .. averageManaPercent .. " %")
-	elseif averageManaPercent >= 20 then
-		EyeOn.averageMana:SetText("|cFFFFFF00Average : " .. averageManaPercent .. " %")
-	else
-		EyeOn.averageMana:SetText("|cFFFF0000Average : " .. averageManaPercent .. " %")
-	end	
+
 end
