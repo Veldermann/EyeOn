@@ -198,35 +198,37 @@ commandTable = {["show"] = function()
 
 -- Class Color Table --
 
-classColorTable = {["DEATH KNIGHT"] = "|cFFC41F3B",
-				["DENON HUNTER"] = "|cFFA330C9",
-				["DRUID"] = "|cFFFF7D0A",
-				["HUNTER"] = "|cFFABD473",
-				["MAGE"] = "|cFF69CCF0",
-				["MONK"] = "|cFF00FF96",
-				["PALADIN"] = "|cFFF58CBA",
-				["PRIEST"] = "|cFFFFFFFF",
-				["ROGUE"] = "|cFFFFF569",
-				["SHAMAN"] = "|cFF0070DE",
-				["WARLOCK"] = "|cFF9482C9",
-				["WARRIOR"] = "|cFFC79C6E"
-				}
+classColorTable = {
+	["DEATH KNIGHT"] = "|cFFC41F3B",
+	["DENON HUNTER"] = "|cFFA330C9",
+	["DRUID"] = "|cFFFF7D0A",
+	["HUNTER"] = "|cFFABD473",
+	["MAGE"] = "|cFF69CCF0",
+	["MONK"] = "|cFF00FF96",
+	["PALADIN"] = "|cFFF58CBA",
+	["PRIEST"] = "|cFFFFFFFF",
+	["ROGUE"] = "|cFFFFF569",
+	["SHAMAN"] = "|cFF0070DE",
+	["WARLOCK"] = "|cFF9482C9",
+	["WARRIOR"] = "|cFFC79C6E"
+}
 
 -- EventTables --
 
-EyeOnEvents = {["UNIT_POWER_UPDATE"] = function()
-					updateResource()
-				end,
-				["GROUP_ROSTER_UPDATE"] = function()
-					autoAddCharacters()
-				end,
-				["RAID_ROSTER_UPDATE"] = function()
-					autoAddCharacters()
-				end,
-				["PLAYER_LOGIN"] = function()
-					autoAddCharacters()
-				end
-				}
+EyeOnEvents = {
+	["UNIT_POWER_UPDATE"] = function()
+								updateResource()
+							end,
+	["GROUP_ROSTER_UPDATE"] = function()
+								autoAddCharacters()
+							end,
+	["RAID_ROSTER_UPDATE"] = function()
+								autoAddCharacters()
+							end,
+	["PLAYER_LOGIN"] = function()
+						autoAddCharacters()
+					end
+}
 				
 -- Slash command --
 
@@ -356,7 +358,7 @@ function autoAddCharacters()
 						else
 							if fileName == "DRUID" or fileName == "PRIEST" or fileName == "SHAMAN" or fileName == "PALADIN" then
 								playerButton = CreateFrame("Button", name, EyeOn, "SecureUnitButtonTemplate")
-								playerButton:SetNormalFontObject("GameFontNormalLarge")
+								playerButton:SetNormalFontObject("GameFontNormalSmall")
 								playerButton:SetScript("OnEnter", function (self, event)
 																	loadGameTooltipInfo(self)
 																end)
@@ -428,9 +430,19 @@ function addPlayer(text)
 					characterToAddFrame:Show()
 					print(playerToAdd ..  " added to the Watch List")	
 				else
-					playerButton = CreateFrame("Button", playerToAdd, EyeOn)
-					playerButton:SetSize(25, 25)
+					playerButton = CreateFrame("Button", playerToAdd, EyeOn, "SecureUnitButtonTemplate")
 					playerButton:SetNormalFontObject("GameFontNormalSmall")
+					playerButton:SetScript("OnEnter", function (self, event)
+														loadGameTooltipInfo(self)
+													end)
+					playerButton:SetScript("OnLeave", function(self, event)
+														GameTooltip:Hide()
+													end)
+					playerButton:SetSize(100, 25)
+					playerButton:RegisterForClicks("AnyUp")
+					playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
+					playerButton:SetAttribute("type", "target")
+					playerButton:SetAttribute("unit", name)
 					table.insert(charactersTable, playerToAdd)
 					print(playerToAdd ..  " added to the Watch List")
 				end
