@@ -82,6 +82,20 @@ function createAndLoad()
 	blacklistFrame.text:SetPoint("CENTER", blacklistFrame.title, "BOTTOM", 0, -20)
 	blacklistFrame.text:SetText("List of black listed players.")
 	
+	-- resizeButton = CreateFrame("Button", "ResizeButton", EyeOn)
+	-- resizeButton:SetSize(16, 16)
+	-- resizeButton:SetPoint("BOTTOMRIGHT")
+	-- resizeButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	-- resizeButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	-- resizeButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	-- resizeButton:SetScript("OnMouseDown", function(self, button)
+	-- 	frame:StartSizing("BOTTOMRIGHT")
+	-- 	frame:SetUserPlaced(true)
+	-- end) 
+	-- resizeButton:SetScript("OnMouseUp", function(self, button)
+	-- 	frame:StopMovingOrSizing()
+	-- end)
+	
 	print("EyeOn LOADED!")
 end
 
@@ -333,20 +347,7 @@ function autoAddCharacters()
 							end
 						else
 							if fileName == "DRUID" or fileName == "PRIEST" or fileName == "SHAMAN" or fileName == "PALADIN" then
-								playerButton = CreateFrame("Button", name, EyeOn, "SecureUnitButtonTemplate")
-								playerButton:SetNormalFontObject("GameFontNormalSmall")
-								playerButton:SetScript("OnEnter", function (self, event)
-																	loadGameTooltipInfo(self)
-																end)
-								playerButton:SetScript("OnLeave", function(self, event)
-																	GameTooltip:Hide()
-																end)
-								playerButton:SetSize(100, 25)
-								playerButton:RegisterForClicks("AnyUp")
-								playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
-								playerButton:SetAttribute("type", "target")
-								playerButton:SetAttribute("unit", name)
-								table.insert(charactersTable, name)
+								createPlayerButton(name)
 							end
 						end
 					end
@@ -363,6 +364,23 @@ function loadGameTooltipInfo(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 0, 0)
 	GameTooltip:SetUnit(frameName)
 	GameTooltip:Show()
+end
+
+function createPlayerButton(character)
+	playerButton = CreateFrame("Button", character, EyeOn, "SecureUnitButtonTemplate")
+	playerButton:SetNormalFontObject("GameFontNormalSmall")
+	playerButton:SetScript("OnEnter", function (self, event)
+										loadGameTooltipInfo(self)
+									end)
+	playerButton:SetScript("OnLeave", function(self, event)
+										GameTooltip:Hide()
+									end)
+	playerButton:SetSize(100, 25)
+	playerButton:RegisterForClicks("AnyUp")
+	playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
+	playerButton:SetAttribute("type", "target")
+	playerButton:SetAttribute("unit", character)
+	table.insert(charactersTable, character)
 end
 
 function addPlayer(text)
@@ -406,20 +424,7 @@ function addPlayer(text)
 					characterToAddFrame:Show()
 					print(playerToAdd ..  " added to the Watch List")	
 				else
-					playerButton = CreateFrame("Button", playerToAdd, EyeOn, "SecureUnitButtonTemplate")
-					playerButton:SetNormalFontObject("GameFontNormalSmall")
-					playerButton:SetScript("OnEnter", function (self, event)
-														loadGameTooltipInfo(self)
-													end)
-					playerButton:SetScript("OnLeave", function(self, event)
-														GameTooltip:Hide()
-													end)
-					playerButton:SetSize(100, 25)
-					playerButton:RegisterForClicks("AnyUp")
-					playerButton:SetPoint("TOP", EyeOn, "TOP", 0, -15)
-					playerButton:SetAttribute("type", "target")
-					playerButton:SetAttribute("unit", playerToAdd)
-					table.insert(charactersTable, playerToAdd)
+					createPlayerButton(playerToAdd)
 					print(playerToAdd ..  " added to the Watch List")
 				end
 			else
@@ -519,19 +524,8 @@ function average(currentMana, maxMana)
 	return math.floor(currentMana * 100 / maxMana)
 end
 
-function updateClassAverage(frame, class, classAverage)
-	frame:Show()
-	if classAverage >= 75 then
-		frame:SetText("|cFF00FF00" .. class .. " : " .. classAverage .. " %")
-	elseif classAverage >= 20 then
-		frame:SetText("|cFFFFFF00" .. class .. " : " .. classAverage .. " %")
-	else
-		frame:SetText("|cFFFF0000" .. class .. " : " .. classAverage .. " %")
-	end
-end
-
 function updateResource()
-	characterTextOffset = -120
+	characterTextOffset = -25
 	eyeonSizeY = 120
 
 	local maxMana = 0
@@ -551,7 +545,11 @@ function updateResource()
 				
 				maxPower = UnitPowerMax(character, Mana, false)
 				currentPower = UnitPower(character, Mana, false)
-				manaPercent = math.floor(currentPower * 100 / maxPower)
+				if currentPower > maxPower then
+					manaPercent = 100
+				else
+					manaPercent = math.floor(currentPower * 100 / maxPower)
+				end
 				maxMana = maxMana + maxPower
 				currentMana = currentMana + currentPower
 				
