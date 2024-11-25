@@ -1,5 +1,5 @@
 local EYEON, EyeOn = ...
-EyeOn.PlayerFrame = {}
+
 
 	-- INITIAL VARIABLES --
 
@@ -17,6 +17,14 @@ init_frame:RegisterEvent("ADDON_LOADED")
 init_frame:SetScript("OnEvent", function()
 									createAndLoad() 
 								end)
+
+-- Slash command --
+
+SLASH_EyeOn1 = "/eyeon"
+SLASH_EyeOn2 = "/eon"
+SlashCmdList["EyeOn"] = function(text)
+	EyeOn.commands.commandExecute(text, EyeOn.commands.commandTable)
+end
 
 -- Creates main frame, positions and add events --
 
@@ -51,11 +59,11 @@ function createAndLoad()
 	EyeOnFrame:SetScript("OnDragStart", EyeOnFrame.StartMoving)
 	EyeOnFrame:SetScript("OnDragStop", EyeOnFrame.StopMovingOrSizing)
 	EyeOnFrame:SetResizeBounds(150, 25)
-	for event, value in pairs(EyeOnEvents) do
+	for event, value in pairs(EyeOn.tables.EyeOnEvents) do
 		EyeOnFrame:RegisterEvent(event)
 	end
 	EyeOnFrame:SetScript("OnEvent", function(self, event, ...)
-									EyeOnEvents[event]()
+									EyeOn.tables.EyeOnEvents[event]()
 								end)
 	EyeOnFrame:SetFrameLevel(1)
 	EyeOnFrame.title = EyeOnFrame:CreateFontString(nil, "OVERLAY")
@@ -123,145 +131,6 @@ function createAndLoad()
 	print("EyeOn LOADED!")
 end
 
-
--- Command Table - Self explanetory --
-
-commandTable = {
-	["show"] = function()
-					print("Using first SHOW!")
-					EyeOnFrame:Show()
-				end,
-	["hide"] = function()
-					print("Using first HIDE!")
-					EyeOnFrame:Hide()
-				end,
-	["add"] = function(text)
-					addPlayer(text)
-				end,
-	["remove"] = function(text)
-					removePlayer(text)
-				end,
-	["reset"] = function()
-					resetTable()
-				end,
-	["blshow"] = function()
-					blacklistFrameUpdate()
-					blacklistFrame:Show()
-				end,
-	["blhide"] = function()
-					blacklistFrame:Hide()
-				end,
-	["bladd"] = function(text)
-					blacklistAdd(text)
-				end,
-	["blremove"] = function(text)
-					blacklistRemove(text)
-				end,				
-	["blacklist"] = {
-		["show"] = function()
-						blacklistFrameUpdate()
-						blacklistFrame:Show()
-					end,
-		["hide"] = function()
-						blacklistFrame:Hide()
-					end,
-		["add"] = function(text)
-						blacklistAdd(text)
-					end,
-		["remove"] = function(text)
-						blacklistRemove(text)
-					end
-	},
-	["bl"] = {
-		["show"] = function()
-						blacklistFrameUpdate()
-						blacklistFrame:Show()
-					end,
-		["hide"] = function()
-						blacklistFrame:Hide()
-					end,
-		["add"] = function(text)
-						blacklistAdd(text)
-					end,
-		["remove"] = function(text)
-						blacklistRemove(text)
-					end
-	},
-	["hidenames"] = function()
-					hideNames()
-				end,
-	["shownames"] = function()
-					showNames()
-				end,
-	["help"] = function()
-					printHelp()
-				end,
-	["removedtable"] = function()
-					printRemove()
-				end,
-	["charactertable"] = function()
-					printCharacter()
-				end,
-	[""] = function()
-					printHelp()
-				end
-}
-
--- Class Color Table --
-
-classColorTable = {
-	["DEATH KNIGHT"] = "|cFFC41F3B",
-	["DENON HUNTER"] = "|cFFA330C9",
-	["DRUID"] = "|cFFFF7D0A",
-	["HUNTER"] = "|cFFABD473",
-	["MAGE"] = "|cFF69CCF0",
-	["MONK"] = "|cFF00FF96",
-	["PALADIN"] = "|cFFF58CBA",
-	["PRIEST"] = "|cFFFFFFFF",
-	["ROGUE"] = "|cFFFFF569",
-	["SHAMAN"] = "|cFF0070DE",
-	["WARLOCK"] = "|cFF9482C9",
-	["WARRIOR"] = "|cFFC79C6E"
-}
-
--- EventTables --
-
-EyeOnEvents = {
-	["UNIT_POWER_UPDATE"] = function()
-								updateResource()
-							end,
-	["GROUP_ROSTER_UPDATE"] = function()
-								autoAddCharacters()
-							end,
-	["RAID_ROSTER_UPDATE"] = function()
-								autoAddCharacters()
-							end,
-	["PLAYER_LOGIN"] = function()
-						autoAddCharacters()
-					end
-}
-				
--- Slash command --
-
-SLASH_EyeOn1 = "/eyeon"
-SLASH_EyeOn2 = "/eon"
-SlashCmdList["EyeOn"] = function(text)
-	commandExecute(text, commandTable)
-end
-
--- Executes the slash commands. --
--- Argument - Player entered text. --
-
-function commandExecute(text, tabel)
-	local command, parameters = strsplit(" ", text, 2)
-	local entry = tabel[command:lower()]
-	local which = type(entry)
-	if which == "function" then
-		entry(parameters)
-	elseif which == "table" then
-		commandExecute(parameters, entry)
-	end
-end
 
 function blacklistFrameUpdate()
 	textToSet = ""
@@ -524,7 +393,7 @@ end
 
 function classColor(key)
 	localizedClass, englishClass = UnitClass(charactersTable[key])
-	for class, color in pairs(classColorTable) do
+	for class, color in pairs(EyeOn.tables.classColorTable) do
 		if class == englishClass then
 			return color
 		end

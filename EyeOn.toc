@@ -6,3 +6,5 @@
 
 EyeOn.lua
 PlayerFrame.lua
+commands.lua
+tables.lua

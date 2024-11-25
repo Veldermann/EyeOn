@@ -1,6 +1,7 @@
 
 local EYEON, EyeOn = ...
 
+EyeOn.PlayerFrame = {}
 
 local function createPlayerMenu(playerFrame)
 	-- Player Menu
