@@ -1,3 +1,5 @@
+local EYEON, EyeOn = ...
+EyeOn.PlayerFrame = {}
 
 	-- INITIAL VARIABLES --
 
@@ -32,34 +34,36 @@ function createAndLoad()
 	end
 	
 	if sizeXaxis == nil and sizeYaxis == nil then
-		sizeXaxis = 200
-		sizeYaxis = 200
+		sizeXaxis = 150
+		sizeYaxis = 25
 	end
 	
-	EyeOn = CreateFrame("Frame", "EyeOn", UIParent, BackdropTemplateMixin and "BackdropTemplate")
-	EyeOn:SetBackdrop({bgFile = [[Interface/Tooltips/UI-Tooltip-Background]], edgeFile = [[Interface/Tooltips/UI-Tooltip-Border]], tile = false, tileSize = 1, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
-	EyeOn:SetBackdropColor(0,0,0,0.6)
-	EyeOn:SetSize(sizeXaxis, sizeYaxis)
-	EyeOn:SetPoint("CENTER", UIParent, "CENTER", positionXaxis, positionYaxis)
-	EyeOn:SetMovable(true)
-	EyeOn:EnableMouse(true)
-	EyeOn:SetResizable(true)
-	EyeOn:RegisterForDrag("LeftButton")
-	EyeOn:SetScript("OnDragStart", EyeOn.StartMoving)
-	EyeOn:SetScript("OnDragStop", EyeOn.StopMovingOrSizing)
-	EyeOn:SetResizeBounds(200, 200)
+	-- Main Frame
+	EyeOnFrame = CreateFrame("Frame", "EyeOn", UIParent, BackdropTemplateMixin and "BackdropTemplate")
+	EyeOnFrame:SetBackdrop({bgFile = [[Interface/Tooltips/UI-Tooltip-Background]], edgeFile = [[Interface/Tooltips/UI-Tooltip-Border]], tile = false, tileSize = 1, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
+	EyeOnFrame:SetBackdropColor(0,0,0,0.6)
+	EyeOnFrame:SetSize(sizeXaxis, sizeYaxis)
+	EyeOnFrame:SetPoint("CENTER", UIParent, "CENTER", positionXaxis, positionYaxis)
+	EyeOnFrame:SetMovable(true)
+	EyeOnFrame:EnableMouse(true)
+	EyeOnFrame:SetResizable(true)
+	EyeOnFrame:RegisterForDrag("LeftButton")
+	EyeOnFrame:SetScript("OnDragStart", EyeOnFrame.StartMoving)
+	EyeOnFrame:SetScript("OnDragStop", EyeOnFrame.StopMovingOrSizing)
+	EyeOnFrame:SetResizeBounds(150, 25)
 	for event, value in pairs(EyeOnEvents) do
-		EyeOn:RegisterEvent(event)
+		EyeOnFrame:RegisterEvent(event)
 	end
-	EyeOn:SetScript("OnEvent", function(self, event, ...)
+	EyeOnFrame:SetScript("OnEvent", function(self, event, ...)
 									EyeOnEvents[event]()
 								end)
-	print("Almost there")
-	EyeOn.title = EyeOn:CreateFontString(nil, "OVERLAY")
-	EyeOn.title:SetFontObject("GameFontNormalSmall")
-	EyeOn.title:SetPoint("CENTER", EyeOn, "TOP", 0, -10)
-	EyeOn.title:SetText("EyeOn")
-	
+	EyeOnFrame:SetFrameLevel(1)
+	EyeOnFrame.title = EyeOnFrame:CreateFontString(nil, "OVERLAY")
+	EyeOnFrame.title:SetFontObject("GameFontNormalSmall")
+	EyeOnFrame.title:SetPoint("CENTER", EyeOnFrame, "TOP", 0, -10)
+	EyeOnFrame.title:SetText("EyeOn")
+
+	-- Blacklist frame
 	blacklistFrame = CreateFrame("Frame", "BlackListFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate")
 	blacklistFrame:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background", edgeFile = "Interface/Tooltips/UI-Tooltip-Border", tile = false, tileSize = 0, edgeSize = 1, insets = { left = 0, right = 0, top = 0, bottom = 0 }});
 	blacklistFrame:SetBackdropColor(0,0,0,0.6)
@@ -68,8 +72,8 @@ function createAndLoad()
 	blacklistFrame:SetMovable(true)
 	blacklistFrame:EnableMouse(true)
 	blacklistFrame:RegisterForDrag("LeftButton")
-	blacklistFrame:SetScript("OnDragStart", EyeOn.StartMoving)
-	blacklistFrame:SetScript("OnDragStop", EyeOn.StopMovingOrSizing)
+	blacklistFrame:SetScript("OnDragStart", EyeOnFrame.StartMoving)
+	blacklistFrame:SetScript("OnDragStop", EyeOnFrame.StopMovingOrSizing)
 	blacklistFrame:Hide()
 	
 	blacklistFrame.title = blacklistFrame:CreateFontString(nil, "OVERLAY")
@@ -81,20 +85,40 @@ function createAndLoad()
 	blacklistFrame.text:SetFontObject("GameFontNormalSmall")
 	blacklistFrame.text:SetPoint("CENTER", blacklistFrame.title, "BOTTOM", 0, -20)
 	blacklistFrame.text:SetText("List of black listed players.")
-	
-	-- resizeButton = CreateFrame("Button", "ResizeButton", EyeOn)
-	-- resizeButton:SetSize(16, 16)
-	-- resizeButton:SetPoint("BOTTOMRIGHT")
-	-- resizeButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
-	-- resizeButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
-	-- resizeButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
-	-- resizeButton:SetScript("OnMouseDown", function(self, button)
-	-- 	frame:StartSizing("BOTTOMRIGHT")
-	-- 	frame:SetUserPlaced(true)
-	-- end) 
-	-- resizeButton:SetScript("OnMouseUp", function(self, button)
-	-- 	frame:StopMovingOrSizing()
-	-- end)
+
+	blacklistFrame.Close = CreateFrame("Button", "CloseButton", blacklistFrame)
+	blacklistFrame.Close:SetSize(16, 16)
+	blacklistFrame.Close:SetPoint("TOPRIGHT")
+	blacklistFrame.Close:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
+	blacklistFrame.Close:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
+	blacklistFrame.Close:SetHighlightTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight", "ADD")
+	blacklistFrame.Close:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" then
+            self:GetParent():Hide()
+        end
+    end)
+		
+	-- Resize button
+	EyeOnFrame.resizeButton = CreateFrame("Button", "ResizeButton", EyeOnFrame)
+	EyeOnFrame.resizeButton:SetSize(16, 16)
+	EyeOnFrame.resizeButton:SetPoint("BOTTOMRIGHT")
+	EyeOnFrame.resizeButton:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+	EyeOnFrame.resizeButton:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+	EyeOnFrame.resizeButton:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+	EyeOnFrame.resizeButton:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" then
+            self.isSizing = true
+            self:GetParent():StartSizing("BOTTOMRIGHT")
+            self:GetParent():SetUserPlaced(true)
+        end
+    end)
+    EyeOnFrame.resizeButton:SetScript("OnMouseUp", function(self, button)
+        if button == "LeftButton" then
+            self.isSizing = false
+            self:GetParent():StopMovingOrSizing()
+			changeSize(self:GetParent():GetWidth(), self:GetParent():GetHeight())
+        end
+    end)
 	
 	print("EyeOn LOADED!")
 end
@@ -105,17 +129,20 @@ end
 commandTable = {
 	["show"] = function()
 					print("Using first SHOW!")
-					EyeOn:Show()
+					EyeOnFrame:Show()
 				end,
 	["hide"] = function()
 					print("Using first HIDE!")
-					EyeOn:Hide()
+					EyeOnFrame:Hide()
 				end,
 	["add"] = function(text)
 					addPlayer(text)
 				end,
 	["remove"] = function(text)
 					removePlayer(text)
+				end,
+	["reset"] = function()
+					resetTable()
 				end,
 	["blshow"] = function()
 					blacklistFrameUpdate()
@@ -165,12 +192,6 @@ commandTable = {
 				end,
 	["shownames"] = function()
 					showNames()
-				end,
-	["position"] = function(text)
-					changePosition(text)
-				end,
-	["size"] = function(text)
-					changeSize(text)
 				end,
 	["help"] = function()
 					printHelp()
@@ -291,10 +312,12 @@ function autoAddCharacters()
 		if not inRaid then
 			inGroup = UnitInParty(charactersTable[i])
 			if not inGroup then
-				characterFrameToRemove = _G[charactersTable[i]]
-				characterFrameToRemove:Hide()
-				table.insert(unusedFrames, charactersTable[i])
-				table.remove(charactersTable, i)
+				if charactersTable[i] ~= nil then
+					characterFrameToRemove = _G[charactersTable[i]]
+					characterFrameToRemove:Hide()
+					table.insert(unusedFrames, charactersTable[i])
+					table.remove(charactersTable, i)
+				end
 			end
 		end
 	end
@@ -347,16 +370,15 @@ function autoAddCharacters()
 							end
 						else
 							if fileName == "DRUID" or fileName == "PRIEST" or fileName == "SHAMAN" or fileName == "PALADIN" then
-								createPlayerButton(name)
+								EyeOn.PlayerFrame.createPlayerFrame(name)
+								updateResource()
 							end
 						end
 					end
 				end
 			end
 		end
-		updateResource()
 	end
-	updateResource()
 end
 
 function loadGameTooltipInfo(self)
@@ -364,23 +386,6 @@ function loadGameTooltipInfo(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 0, 0)
 	GameTooltip:SetUnit(frameName)
 	GameTooltip:Show()
-end
-
-function createPlayerButton(character)
-	playerButton = CreateFrame("Button", character, EyeOn, "SecureUnitButtonTemplate")
-	playerButton:SetNormalFontObject("GameFontNormalSmall")
-	playerButton:SetScript("OnEnter", function (self, event)
-										loadGameTooltipInfo(self)
-									end)
-	playerButton:SetScript("OnLeave", function(self, event)
-										GameTooltip:Hide()
-									end)
-	playerButton:SetSize(100, 25)
-	playerButton:RegisterForClicks("AnyUp")
-	playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, 0)
-	playerButton:SetAttribute("type", "target")
-	playerButton:SetAttribute("unit", character)
-	table.insert(charactersTable, character)
 end
 
 function addPlayer(text)
@@ -424,7 +429,7 @@ function addPlayer(text)
 					characterToAddFrame:Show()
 					print(playerToAdd ..  " added to the Watch List")	
 				else
-					createPlayerButton(playerToAdd)
+					EyeOn.PlayerFrame.createPlayerFrame(playerToAdd)
 					print(playerToAdd ..  " added to the Watch List")
 				end
 			else
@@ -437,8 +442,19 @@ function addPlayer(text)
 	updateResource()
 end
 
+function removePlayerFrame(playerFrame)
+	for characterKey, character in pairs(charactersTable) do
+		if character == playerFrame:GetName() then
+			table.insert(removedTable, character)
+			characterToRemoveFrame = _G[character]
+			characterToRemoveFrame:Hide()
+			table.remove(charactersTable, characterKey)
+		end
+	end
+end
+
 function removePlayer(text)
-	local players = {strsplit(" ", text)}
+	players = {strsplit(" ", text)}
 	for key, value in pairs(players) do
 		playerToRemove = value:gsub("^%l", string.upper)
 		for characterKey, character in pairs(charactersTable) do
@@ -447,10 +463,10 @@ function removePlayer(text)
 				characterToRemoveFrame = _G[character]
 				characterToRemoveFrame:Hide()
 				table.remove(charactersTable, characterKey)
-				updateResource()
 			end
 		end
 	end
+	updateResource()
 end
 
 function resetTable()
@@ -471,9 +487,7 @@ function changePosition(position)
 	positionYaxis = positiony
 end
 
-function changeSize(size)
-	local x, y = strsplit(" ", size, 2)
-	EyeOn:SetSize(x, y)
+function changeSize(x, y)
 	sizeXaxis = x
 	sizeYaxis = y
 end
@@ -524,24 +538,36 @@ function average(currentMana, maxMana)
 	return math.floor(currentMana * 100 / maxMana)
 end
 
+function getTableLength(table)
+	count = 0
+	for _ in pairs(table) do
+		count = count + 1
+	end
+	return count
+end
+
 function updateResource()
 	characterTextOffset = -25
-	eyeonSizeY = 120
 
 	local maxMana = 0
 	local currentMana = 0
 	
+	local characterCount = getTableLength(charactersTable)
+	local eyeonYaxisMinimum = characterCount * 15 + 20
+	if isPlayerFrameVisible and sizeYaxis < eyeonYaxisMinimum then
+		EyeOnFrame:SetSize(sizeXaxis, eyeonYaxisMinimum)
+		EyeOnFrame:SetResizeBounds(sizeXaxis, eyeonYaxisMinimum)
+	end
+
 	for class=1, #classTable do
 		for key, character in pairs(charactersTable) do
 			localizedClass, englishClass = UnitClass(charactersTable[key])
 			if englishClass == classTable[class] then
 				playerButton = _G[character]
-				playerButton:SetPoint("CENTER", EyeOn, "TOP", 0, characterTextOffset)
+				playerButton:SetPoint("CENTER", EyeOnFrame, "TOP", 0, characterTextOffset)
 				isPlayerFrameVisible = playerButton:IsShown()
-				if isPlayerFrameVisible then
-					characterTextOffset = characterTextOffset - 15
-					eyeonSizeY = eyeonSizeY + 15
-				end
+				characterTextOffset = characterTextOffset - 15
+
 				
 				maxPower = UnitPowerMax(character, Mana, false)
 				currentPower = UnitPower(character, Mana, false)
@@ -567,8 +593,5 @@ function updateResource()
 			end
 		end
 	end
-	
-	EyeOn:SetSize(150, eyeonSizeY)
-	EyeOn:SetResizeBounds(150, eyeonSizeY)
 
 end
